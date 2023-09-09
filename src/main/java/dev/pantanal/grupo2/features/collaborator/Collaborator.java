@@ -2,17 +2,22 @@ package dev.pantanal.grupo2.features.collaborator;
 
 
 import java.util.Date;
-
+import java.util.HashSet;
+import java.util.Set;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
 
+import dev.pantanal.grupo2.features.institution.Institution;
 import jakarta.persistence.Basic;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToMany;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
 import lombok.AllArgsConstructor;
@@ -26,9 +31,9 @@ import lombok.NoArgsConstructor;
 public class Collaborator {
 
   public enum InstitutionType {
-    NON_PROFIT(label: "Sem fins lucrativos"),
-    MEDICAL(label: "Saúde"),
-    FOOD(label: "Comida");
+    NON_PROFIT("Sem fins lucrativos"),
+    MEDICAL("Saúde"),
+    FOOD("Comida");
 
     public final String label;
 
@@ -65,6 +70,14 @@ public class Collaborator {
   private String company;
 
   @Basic
-  @Column(columnDefinition = "double")
+  @Column
   private Number investmentMoney;
+
+  @ManyToMany
+  @JoinTable(
+      name = "collaborator_institution",
+      joinColumns = @JoinColumn(name = "collaborator_id"),
+      inverseJoinColumns = @JoinColumn(name = "institution_id")
+  )
+  private Set<Institution> institutions = new HashSet<>();
 }
